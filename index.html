@@ -1,1 +1,152 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klimmzug W</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
+
+<style>
+body{
+    margin:0;
+    background:#111;
+    color:white;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    text-align:center;
+}
+
+h1{
+    margin-top:25px;
+}
+
+#progress{
+    font-size:22px;
+    margin:20px;
+}
+
+.container{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+    margin-bottom:30px;
+}
+
+.item{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:#2b2b2b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:42px;
+    font-weight:bold;
+    cursor:pointer;
+    user-select:none;
+}
+
+.done{
+    background:#22c55e;
+    text-decoration:line-through;
+}
+
+button{
+    padding:14px 28px;
+    font-size:18px;
+    border:none;
+    border-radius:14px;
+    background:#0ea5e9;
+    color:white;
+    margin-bottom:40px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Klimmzug W</h1>
+
+<div id="progress"></div>
+
+<div class="container" id="liste"></div>
+
+<button onclick="resetAll()">Neues W starten</button>
+
+<script>
+if ("serviceWorker" in navigator) {
+ navigator.serviceWorker.register("sw.js");
+}
+
+const zahlen=[4,3,2,1,2,3,4,3,2,1,2,3,4];
+
+let status=JSON.parse(localStorage.getItem("status")||"null");
+
+if(!status){
+ status=Array(zahlen.length).fill(false);
+}
+
+const liste=document.getElementById("liste");
+
+function speichern(){
+ localStorage.setItem("status",JSON.stringify(status));
+}
+
+function zeichnen(){
+
+ liste.innerHTML="";
+
+ let fertig=0;
+
+ status.forEach((wert,index)=>{
+
+   if(wert) fertig++;
+
+   let div=document.createElement("div");
+
+   div.className="item";
+
+   if(wert) div.classList.add("done");
+
+   div.innerText=zahlen[index];
+
+   div.onclick=()=>{
+
+      status[index]=!status[index];
+
+      speichern();
+
+      zeichnen();
+
+   };
+
+   liste.appendChild(div);
+
+ });
+
+ progress.innerHTML=fertig+" / 13 erledigt";
+
+ if(fertig==13){
+    progress.innerHTML="🎉 W geschafft!";
+ }
+
+}
+
+function resetAll(){
+
+ status=Array(zahlen.length).fill(false);
+
+ speichern();
+
+ zeichnen();
+
+}
+
+zeichnen();
+</script>
+
+</body>
+</html>
